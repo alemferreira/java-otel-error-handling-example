@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-error-handling-otel
+  namespace: java-error-handling-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-error-handling-otel
+  template:
+    metadata:
+      labels:
+        app: java-error-handling-otel
+    spec:
+      containers:
+        - name: java-error-handling-otel
+          image: java-error-handling-otel:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: "java-error-handling-otel"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://grafana-k8s-monitoring-alloy-receiver.grafana-k8s-monitoring.svc.cluster.local:4317"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "grpc"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/otel-agent.jar"
